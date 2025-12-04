@@ -1,0 +1,147 @@
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  --dark-primary: #082f49;
+    --light-primary: #f0f9ff;
+    --light-secondary: #cbd5e1;
+    --accent: oklch(71.5% 0.143 215.221);
+    --btn-disabled: #a8a29e;
+}
+
+main {
+  max-width: 800px;
+  margin: 2rem auto;
+}
+
+/*===========================
+Form
+============================*/
+form {
+  margin-block: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+.form-button {
+  background-color: oklch(52.5% 0.223 3.958);
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+form select {
+  background-color: var(--light-primary);
+  color: var(--dark-primary);
+  font-size: 1.25rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+form select option {
+  background-color: var(--light-primary);
+  color: var(--dark-primary);
+  font-size: 1.25rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+
+/*===========================
+Buttons
+============================*/
+.btn {
+  background-color: var(--light-primary);
+  color: var(--dark-primary);
+  font-family: inherit;
+  border: 2px solid var(--dark-primary);
+  border-radius: .5em;
+  cursor: pointer;
+}
+
+.btn--text {
+  background-color: var(--dark-primary);
+  color: var(--light-primary);
+  font-size: 1.25rem;
+  width: max-content;
+  margin: 0 auto;
+  padding: .25em .75em;
+}
+
+.btn--emoji {
+  width: 100%;
+  height: 100%;
+  font-size: 4rem;
+  border: 2px solid var(--light-primary);
+}
+
+.btn--text:hover,
+.btn--text:focus {
+  background-color: var(--light-primary);
+  color: var(--dark-primary);
+  box-shadow: 0 0 5px 1px var(--dark-primary);
+}
+
+.card-container {
+  padding-left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  width: 100%;
+  margin-block: 2rem;
+}
+
+.card-item {
+  list-style: none;
+  flex-basis: calc((100% - (4 * 1rem)) / 5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1/1;
+}
+/* Animated memory card */
+.card-item--selected,
+.card-item--matched,
+.btn--emoji__back--selected,
+.btn--emoji__back--matched {
+    transform: rotateY(180deg);
+}
+
+.card-item--selected {
+    transition: .6s;
+    transform-style: preserve-3d;
+}
+
+.btn--emoji__front,
+.btn--emoji__back--selected {
+    backface-visibility: hidden;    
+}
+
+.btn--emoji__back--matched {
+    backface-visibility: unset;
+    background-color: var(--accent);
+    border: 2px solid var(--accent);
+    cursor: not-allowed;
+}
+
+.btn--emoji__front:hover,
+.btn--emoji__front:focus {
+    background-color: var(--accent);
+    border: 2px solid var(--dark-primary);
+    box-shadow: 0 0 5px 2px var(--light-primary);
+    cursor: pointer;
+}
+
+.card-item--selected .btn--emoji__back--selected {
+    border: 2px solid var(--dark-primary);
+    box-shadow: 0 0 5px 2px var(--light-primary);
+}
+
