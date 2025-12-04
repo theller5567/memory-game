@@ -14,7 +14,25 @@ function App() {
   const [matchedEmojis, setMatchedEmojis] = useState([]);
   const [selectedEmojis, setSelectedEmojis] = useState([]);
   const [isGameWon, setIsGameWon] = useState(false);
-  const [category, setCategory] = useState("animals-and-nature");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [cardFlips, setCardFlips] = useState(0);
+  const [difficulty, setDifficulty] = useState("insane");
+  const [isGameLost, setIsGameLost] = useState(false);
+
+
+  const difficultyLevels = {
+    beginner: 40,
+    easy: 30,
+    medium: 20,
+    hard: 15,
+    insane: 10,
+  }
+
+  useEffect(() => {
+    if (cardFlips >= difficultyLevels[difficulty]) {
+      gameLost()
+    }
+  }, [cardFlips, difficulty]);
 
   useEffect(() => {
     if (matchedEmojis.length && matchedEmojis.length === emojis.length) {
@@ -22,20 +40,33 @@ function App() {
     }
   }, [matchedEmojis, emojis]);
 
+  function resetGame(){
+    setIsGameStarted(false)
+    setIsGameWon(false)
+    setIsGameLost(false)
+    setEmojis([])
+    setMatchedEmojis([])
+    setSelectedEmojis([])
+    setCardFlips(0)
+  }
+
   function gameWon(){
+    console.log("Game won");
     setIsGameWon(true)
     const timer = setTimeout(() => {
-      setIsGameWon(false)
-      setIsGameStarted(false)
-      setEmojis([])
-      setMatchedEmojis([])
-      setSelectedEmojis([])
-      setIsLoading(true)
-      setError(null)
+      resetGame()
     }, 10000)
     return () => clearTimeout(timer)
   }
-  
+
+  function gameLost(){
+    console.log("Game lost");
+    setIsGameLost(true)
+    const timer = setTimeout(() => {
+      resetGame()
+    }, 10000)
+    return () => clearTimeout(timer)
+  }
 
   useEffect(() => {
     if (
@@ -108,6 +139,7 @@ function App() {
         { name, index },
       ]);
     } else if (!selectedCardEntry && selectedEmojis.length === 2) {
+      setCardFlips((prevCardFlips) => prevCardFlips + 1);
       setSelectedEmojis([{ name, index }]);
     }
   }
@@ -117,7 +149,11 @@ function App() {
     const formData = new FormData(e.target);
     const category = formData.get("category");
     console.log("category: ", category);
-    setCategory(category);
+    if (category === "") {
+      setError("Please select a category");
+      return;
+    }
+    setSelectedCategory(category);
     grabEmojis(category);
     setIsGameStarted(true)
   }
@@ -127,7 +163,7 @@ function App() {
       {isGameWon && <Confetti />}
       <h1 className="text-5xl font-bold text-cyan-500">Memory Game</h1>
       {!isGameStarted ? 
-        <Form handleSubmit={handleSubmit} /> :
+        <Form handleSubmit={handleSubmit} cat={selectedCategory} /> :
         <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -135,11 +171,17 @@ function App() {
         transition={{ duration: 0.5 }}
         exitTransition={{ duration: 1 }}
         >
+          <p className="mt-4 text-2xl text-neutral-500">Difficulty: <span className="text-neutral-100">{difficulty}</span></p>
+          <p className="text-2xl text-neutral-500">Card Flips: <span className="text-neutral-100">{cardFlips} of {difficultyLevels[difficulty]}</span></p>
+          {isGameLost && <p className="text-2xl text-red-500">Game lost</p>}
+          {isGameWon && <p className="text-2xl text-green-500">Game won</p>}
+        
         <Cards
           data={emojis}
           handleClick={handleFlip}
           matchedEmojis={matchedEmojis}
           selectedEmojis={selectedEmojis}
+
         />
         </motion.div>
       }
