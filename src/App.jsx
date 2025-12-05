@@ -3,7 +3,10 @@ import "./App.css";
 import Cards from "./components/Cards";
 import Confetti from "react-confetti";
 import Form from "./components/Form";
+import Leaderboard from "./components/Leaderboard";
 import { motion } from "framer-motion";
+import { saveGameStats } from "./utils/api";
+
 
 
 function App() {
@@ -19,6 +22,7 @@ function App() {
   const [difficulty, setDifficulty] = useState("beginner");
   const [isGameLost, setIsGameLost] = useState(false);
   const [name, setName] = useState("");
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
 
 
   const difficultyLevels = {
@@ -28,6 +32,15 @@ function App() {
     hard: 15,
     insane: 10,
   }
+
+  // Toggle background overlay when game is active
+  useEffect(() => {
+    const body = document.body;
+    body.classList.toggle("bg-darken", isGameStarted);
+    return () => {
+      body.classList.remove("bg-darken");
+    };
+  }, [isGameStarted]);
 
   useEffect(() => {
     if (cardFlips >= difficultyLevels[difficulty]) {
@@ -54,18 +67,40 @@ function App() {
     setCardFlips(0)
   }
 
-  function gameWon(){
+  async function gameWon(){
     console.log("Game won");
     setIsGameWon(true)
+    
+    // Save game stats to database
+    if (name && difficulty) {
+      try {
+        await saveGameStats(name, difficulty, cardFlips, true);
+        console.log("Game stats saved successfully");
+      } catch (error) {
+        console.error("Failed to save game stats:", error);
+      }
+    }
+    
     const timer = setTimeout(() => {
       resetGame()
     }, 10000)
     return () => clearTimeout(timer)
   }
 
-  function gameLost(){
+  async function gameLost(){
     console.log("Game lost");
     setIsGameLost(true)
+    
+    // Save game stats to database (even for losses)
+    if (name && difficulty) {
+      try {
+        await saveGameStats(name, difficulty, cardFlips, false);
+        console.log("Game stats saved successfully");
+      } catch (error) {
+        console.error("Failed to save game stats:", error);
+      }
+    }
+    
     const timer = setTimeout(() => {
       resetGame()
     }, 10000)
@@ -143,6 +178,7 @@ function App() {
         { name, index },
       ]);
     } else if (!selectedCardEntry && selectedEmojis.length === 2) {
+      // Increment flips when selecting a new card after 2 are already selected
       setCardFlips((prevCardFlips) => prevCardFlips + 1);
       setSelectedEmojis([{ name, index }]);
     }
@@ -152,51 +188,86 @@ function App() {
     e.preventDefault();
     const formData = new FormData(e.target);
     const category = formData.get("category");
-    // const difficulty = formData.get("difficulty");
-    const name = formData.get("name");
-    console.log("formData: ", formData);
-    setName(name);
+    const difficultyValue = formData.get("difficulty");
+    const nameValue = formData.get("name");
+    
+    setName(nameValue);
+    setDifficulty(difficultyValue);
+    
     if (category === "") {
       setError("Please select a category");
       return;
     }
+    
     setSelectedCategory(category);
+    setCardFlips(0); // Reset flips for new game
     grabEmojis(category);
     setIsGameStarted(true)
   }
 
   return (
+    <>
+    
     <main>
+      
+      <div className="game-container">
       {isGameWon && <Confetti />}
-      <h1 className="text-5xl font-bold text-cyan-500">Memory Game</h1>
-      {!isGameStarted ? 
-        <Form handleSubmit={handleSubmit} cat={selectedCategory} /> :
+      <button
+      onClick={() => setShowLeaderboard(!showLeaderboard)}
+      className="btn btn--leaderboard"
+    >
+      {showLeaderboard ? "Hide Leaderboard" : "View Leaderboard"}
+    </button>
+      <div className="header-section">
+        <h1>Emoji Memory Game</h1>
+      </div>
+
+      {showLeaderboard ? (
+        <Leaderboard />
+      ) : !isGameStarted ? (
+        <Form handleSubmit={handleSubmit} cat={selectedCategory} />
+      ) : (
         <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.5 }}
-        exitTransition={{ duration: 1 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className="game-container-motion"
         >
-          <div className="stats">
-            <p className="text-2xl text-neutral-500">Name: <span className="text-neutral-100">{name}</span></p>
-            <p className="text-2xl text-neutral-500">Difficulty: <span className="text-neutral-100">{difficulty}</span></p>
-            <p className="text-2xl text-neutral-500">Card Flips: <span className="text-neutral-100">{cardFlips} of {difficultyLevels[difficulty]}</span></p>
+          <div className="stats mb-4">
+            <p className="text-2xl text-neutral-500">
+              Name: <span className="text-neutral-100">{name}</span>
+            </p>
+            <p className="text-2xl text-neutral-500">
+              Difficulty: <span className="text-neutral-100 capitalize">{difficulty}</span>
+            </p>
+            <p className="text-2xl text-neutral-500">
+              Card Flips: <span className="text-neutral-100">{cardFlips} of {difficultyLevels[difficulty]}</span>
+            </p>
           </div>
 
-          {isGameLost && <p className="text-2xl text-red-500">Game lost</p>}
-          {isGameWon && <p className="text-2xl text-green-500">Game won</p>}
-        
-        <Cards
-          data={emojis}
-          handleClick={handleFlip}
-          matchedEmojis={matchedEmojis}
-          selectedEmojis={selectedEmojis}
+          {isGameLost && (
+            <p className="text-2xl text-red-500 mb-4">
+              Game Lost! You exceeded the flip limit.
+            </p>
+          )}
+          {isGameWon && (
+            <p className="text-2xl text-green-500 mb-4">
+              Congratulations! You won with {cardFlips} flips!
+            </p>
+          )}
 
-        />
+          <Cards
+            data={emojis}
+            handleClick={handleFlip}
+            matchedEmojis={matchedEmojis}
+            selectedEmojis={selectedEmojis}
+          />
         </motion.div>
-      }
+      )}
+      </div>
     </main>
+    </>
   );
 }
 

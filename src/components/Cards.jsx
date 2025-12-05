@@ -20,6 +20,8 @@ export default function Cards({ data, handleClick, matchedEmojis, selectedEmojis
                         handleClick={() => handleClick(emoji.name, index)}
                         selectedCardEntry={selectedCardEntry}
                         matchedCardEntry={matchedCardEntry}
+                        emojiName={emoji.name}
+                        emojiIndex={index +1}
                     />
                 </li>
             )

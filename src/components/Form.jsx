@@ -3,10 +3,10 @@ import { categories } from '../data'
 
 function Form({ handleSubmit }) {
     const [selectedCategory, setSelectedCategory] = useState("");
-    
+    const [difficulty, setDifficulty] = useState("beginner");
 
-    const options = [
-        <option key="default" value="" disabled>Select an option</option>,
+    const categoryOptions = [
+        <option key="default" value="" disabled>Select a category</option>,
         ...categories.map((category) => (
             <option key={category.value} value={category.value}>
                 {category.label}
@@ -18,15 +18,34 @@ function Form({ handleSubmit }) {
     
     return (
         <form onSubmit={(e) => handleSubmit(e)}>
-            <input type="text" name="name" id="name" placeholder="Enter your name" required />
+            <div className="input-group">
+                <label htmlFor="name">Name</label>
+                <input 
+                    type="text" 
+                    name="name" 
+                    id="name" 
+                    placeholder="Enter your name" 
+                    required 
+                />
+            </div>
+            <div className="input-group">
             <label htmlFor="difficulty">Difficulty</label>
-            {/* <select name="difficulty" id="difficulty" value={difficulty} onChange={(e) => setDifficulty(e.target.value)} required>
-                <option value="beginner">Beginner</option>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-                <option value="insane">Insane</option>
-            </select> */}
+            <select 
+                name="difficulty" 
+                id="difficulty" 
+                value={difficulty} 
+                onChange={(e) => setDifficulty(e.target.value)} 
+                required
+            >
+                <option value="beginner">Beginner (40 flips)</option>
+                <option value="easy">Easy (30 flips)</option>
+                <option value="medium">Medium (20 flips)</option>
+                <option value="hard">Hard (15 flips)</option>
+                <option value="insane">Insane (10 flips)</option>
+            </select>
+            </div>
+            <div className="input-group">
+            <label htmlFor="category">Category</label>
             <select 
                 name="category" 
                 id="category" 
@@ -34,8 +53,9 @@ function Form({ handleSubmit }) {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 required
             >
-                {options}
+                {categoryOptions}
             </select>
+            </div>
             <button 
                 type="submit" 
                 className="form-button" 
