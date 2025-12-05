@@ -37,11 +37,26 @@ body.bg-darken::before {
 
 .win-lose-container {
   position: absolute;
-  z-index: 5;
+  z-index: 1;
   width: 500px;
   height: 200px;
+  border-radius: 1rem;
   box-shadow: 0 0 0 999em rgba(0,0,0,0.8);
   background: transparent;
+}
+.win-lose-container .btn--try-again {
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  display: inline-block;
+  cursor: pointer;
+  max-width: 60%;
+  margin: 0 auto;
+  transition: all 0.3s ease;
+}
+.win-lose-container .btn--try-again:hover {
+  background-color: var(--light-secondary);
+  color: var(--dark);
 }
 .win, .lose {
   width: 100%;

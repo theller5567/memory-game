@@ -57,6 +57,17 @@ function App() {
     }
   }, [matchedEmojis, emojis]);
 
+  function tryAgain(){
+    setIsGameWon(false)
+    setIsGameLost(false)
+    setEmojis([])
+    setMatchedEmojis([])
+    setSelectedEmojis([])
+    setCardFlips(0)
+    setIsGameStarted(true)
+    grabEmojis(selectedCategory)
+  }
+
   function resetGame(){
     setIsGameStarted(false)
     setIsGameWon(false)
@@ -81,19 +92,11 @@ function App() {
       }
     }
     
-    const timer = setTimeout(() => {
-      resetGame()
-    }, 10000)
-    return () => clearTimeout(timer)
   }
 
   async function gameLost(){
     console.log("Game lost");
     setIsGameLost(true)
-    const timer = setTimeout(() => {
-      resetGame()
-    }, 10000)
-    return () => clearTimeout(timer)
   }
 
   useEffect(() => {
@@ -198,10 +201,11 @@ function App() {
     <>
     
     <main>
-      {isGameWon && <WinLose isGameWon={isGameWon} />}
-      {isGameLost && <WinLose isGameLost={isGameLost} />}
+    {isGameWon && <Confetti />}
+      {isGameWon && <WinLose isGameWon={isGameWon} tryAgain={tryAgain} />}
+      {isGameLost && <WinLose isGameLost={isGameLost} tryAgain={tryAgain} />}
       <div className="game-container">
-      {isGameWon && <Confetti />}
+      
       <button
       onClick={() => setShowLeaderboard(!showLeaderboard)}
       className="btn btn--leaderboard"
