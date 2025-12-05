@@ -16,8 +16,9 @@ function App() {
   const [isGameWon, setIsGameWon] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [cardFlips, setCardFlips] = useState(0);
-  const [difficulty, setDifficulty] = useState("insane");
+  const [difficulty, setDifficulty] = useState("beginner");
   const [isGameLost, setIsGameLost] = useState(false);
+  const [name, setName] = useState("");
 
 
   const difficultyLevels = {
@@ -30,6 +31,9 @@ function App() {
 
   useEffect(() => {
     if (cardFlips >= difficultyLevels[difficulty]) {
+      localStorage.setItem("difficulty", difficulty);
+      localStorage.setItem("cardFlips", cardFlips);
+      
       gameLost()
     }
   }, [cardFlips, difficulty]);
@@ -148,7 +152,10 @@ function App() {
     e.preventDefault();
     const formData = new FormData(e.target);
     const category = formData.get("category");
-    console.log("category: ", category);
+    // const difficulty = formData.get("difficulty");
+    const name = formData.get("name");
+    console.log("formData: ", formData);
+    setName(name);
     if (category === "") {
       setError("Please select a category");
       return;
@@ -171,8 +178,12 @@ function App() {
         transition={{ duration: 0.5 }}
         exitTransition={{ duration: 1 }}
         >
-          <p className="mt-4 text-2xl text-neutral-500">Difficulty: <span className="text-neutral-100">{difficulty}</span></p>
-          <p className="text-2xl text-neutral-500">Card Flips: <span className="text-neutral-100">{cardFlips} of {difficultyLevels[difficulty]}</span></p>
+          <div className="stats">
+            <p className="text-2xl text-neutral-500">Name: <span className="text-neutral-100">{name}</span></p>
+            <p className="text-2xl text-neutral-500">Difficulty: <span className="text-neutral-100">{difficulty}</span></p>
+            <p className="text-2xl text-neutral-500">Card Flips: <span className="text-neutral-100">{cardFlips} of {difficultyLevels[difficulty]}</span></p>
+          </div>
+
           {isGameLost && <p className="text-2xl text-red-500">Game lost</p>}
           {isGameWon && <p className="text-2xl text-green-500">Game won</p>}
         

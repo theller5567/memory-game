@@ -4,6 +4,7 @@ import { categories } from '../data'
 function Form({ handleSubmit }) {
     const [selectedCategory, setSelectedCategory] = useState("");
     
+
     const options = [
         <option key="default" value="" disabled>Select an option</option>,
         ...categories.map((category) => (
@@ -17,6 +18,15 @@ function Form({ handleSubmit }) {
     
     return (
         <form onSubmit={(e) => handleSubmit(e)}>
+            <input type="text" name="name" id="name" placeholder="Enter your name" required />
+            <label htmlFor="difficulty">Difficulty</label>
+            {/* <select name="difficulty" id="difficulty" value={difficulty} onChange={(e) => setDifficulty(e.target.value)} required>
+                <option value="beginner">Beginner</option>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+                <option value="insane">Insane</option>
+            </select> */}
             <select 
                 name="category" 
                 id="category" 
