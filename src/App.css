@@ -35,6 +35,35 @@ body.bg-darken::before {
   --btn-disabled: #a8a29e;
 }
 
+.win-lose-container {
+  position: absolute;
+  z-index: 5;
+  width: 500px;
+  height: 200px;
+  box-shadow: 0 0 0 999em rgba(0,0,0,0.8);
+  background: transparent;
+}
+.win, .lose {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  border-radius: 1rem;
+}
+.win h2, .lose h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  font-family: "Slackey", sans-serif;
+}
+.win {
+  background-color: oklch(72.3% 0.219 149.579);
+}
+.lose {
+  background-color: oklch(63.7% 0.237 25.331);
+}
+
 main {
   display: flex;
   flex-direction: column;

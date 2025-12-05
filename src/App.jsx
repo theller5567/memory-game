@@ -6,7 +6,7 @@ import Form from "./components/Form";
 import Leaderboard from "./components/Leaderboard";
 import { motion } from "framer-motion";
 import { saveGameStats } from "./utils/api";
-
+import WinLose from "./components/WinLose";
 
 
 function App() {
@@ -91,15 +91,15 @@ function App() {
     console.log("Game lost");
     setIsGameLost(true)
     
-    // Save game stats to database (even for losses)
-    if (name && difficulty) {
-      try {
-        await saveGameStats(name, difficulty, cardFlips, false);
-        console.log("Game stats saved successfully");
-      } catch (error) {
-        console.error("Failed to save game stats:", error);
-      }
-    }
+    // // Save game stats to database (even for losses)
+    // if (name && difficulty) {
+    //   try {
+    //     await saveGameStats(name, difficulty, cardFlips, false);
+    //     console.log("Game stats saved successfully");
+    //   } catch (error) {
+    //     console.error("Failed to save game stats:", error);
+    //   }
+    // }
     
     const timer = setTimeout(() => {
       resetGame()
@@ -209,7 +209,8 @@ function App() {
     <>
     
     <main>
-      
+      {isGameWon && <WinLose isGameWon={isGameWon} />}
+      {isGameLost && <WinLose isGameLost={isGameLost} />}
       <div className="game-container">
       {isGameWon && <Confetti />}
       <button

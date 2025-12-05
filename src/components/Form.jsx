@@ -4,7 +4,7 @@ import { categories } from '../data'
 function Form({ handleSubmit }) {
     const [selectedCategory, setSelectedCategory] = useState("");
     const [difficulty, setDifficulty] = useState("beginner");
-
+    const [name, setName] = useState("");
     const categoryOptions = [
         <option key="default" value="" disabled>Select a category</option>,
         ...categories.map((category) => (
@@ -26,6 +26,8 @@ function Form({ handleSubmit }) {
                     id="name" 
                     placeholder="Enter your name" 
                     required 
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                 />
             </div>
             <div className="input-group">
