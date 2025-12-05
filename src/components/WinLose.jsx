@@ -9,7 +9,7 @@ function WinLose({ isGameWon, isGameLost }) {
         }
       {isGameLost && (
         <div className="lose bg-red-500">
-          <h2>Game Over!<br />You lost!</h2>
+          <h2>Game Over!<br />You lost!<br />You exceeded the flip limit.</h2>
         </div>
       )}
     </div>

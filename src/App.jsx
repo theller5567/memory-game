@@ -90,17 +90,6 @@ function App() {
   async function gameLost(){
     console.log("Game lost");
     setIsGameLost(true)
-    
-    // // Save game stats to database (even for losses)
-    // if (name && difficulty) {
-    //   try {
-    //     await saveGameStats(name, difficulty, cardFlips, false);
-    //     console.log("Game stats saved successfully");
-    //   } catch (error) {
-    //     console.error("Failed to save game stats:", error);
-    //   }
-    // }
-    
     const timer = setTimeout(() => {
       resetGame()
     }, 10000)
@@ -246,24 +235,15 @@ function App() {
               Card Flips: <span className="text-neutral-100">{cardFlips} of {difficultyLevels[difficulty]}</span>
             </p>
           </div>
-
-          {isGameLost && (
-            <p className="text-2xl text-red-500 mb-4">
-              Game Lost! You exceeded the flip limit.
-            </p>
-          )}
-          {isGameWon && (
-            <p className="text-2xl text-green-500 mb-4">
-              Congratulations! You won with {cardFlips} flips!
-            </p>
-          )}
-
-          <Cards
-            data={emojis}
-            handleClick={handleFlip}
-            matchedEmojis={matchedEmojis}
-            selectedEmojis={selectedEmojis}
-          />
+          {isLoading ? 
+            <p className="text-2xl text-neutral-500 text-center">Loading emoji deck...</p> :
+            <Cards
+              data={emojis}
+              handleClick={handleFlip}
+              matchedEmojis={matchedEmojis}
+              selectedEmojis={selectedEmojis}
+            />
+          }
         </motion.div>
       )}
       </div>
