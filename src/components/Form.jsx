@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { categories } from '../data'
 
-function Form({ handleSubmit }) {
+function Form({ handleSubmit, name, setName }) {
     const [selectedCategory, setSelectedCategory] = useState("");
     const [difficulty, setDifficulty] = useState("beginner");
-    const [name, setName] = useState("");
+    
     const categoryOptions = [
         <option key="default" value="" disabled>Select a category</option>,
         ...categories.map((category) => (

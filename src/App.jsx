@@ -8,7 +8,6 @@ import { motion } from "framer-motion";
 import { saveGameStats } from "./utils/api";
 import WinLose from "./components/WinLose";
 
-
 function App() {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [emojis, setEmojis] = useState([]);
@@ -24,16 +23,14 @@ function App() {
   const [name, setName] = useState("");
   const [showLeaderboard, setShowLeaderboard] = useState(false);
 
-
   const difficultyLevels = {
     beginner: 40,
     easy: 30,
     medium: 20,
     hard: 15,
     insane: 10,
-  }
+  };
 
-  // Toggle background overlay when game is active
   useEffect(() => {
     const body = document.body;
     body.classList.toggle("bg-darken", isGameStarted);
@@ -46,8 +43,8 @@ function App() {
     if (cardFlips >= difficultyLevels[difficulty]) {
       localStorage.setItem("difficulty", difficulty);
       localStorage.setItem("cardFlips", cardFlips);
-      
-      gameLost()
+
+      gameLost();
     }
   }, [cardFlips, difficulty]);
 
@@ -57,32 +54,31 @@ function App() {
     }
   }, [matchedEmojis, emojis]);
 
-  function tryAgain(){
-    setIsGameWon(false)
-    setIsGameLost(false)
-    setEmojis([])
-    setMatchedEmojis([])
-    setSelectedEmojis([])
-    setCardFlips(0)
-    setIsGameStarted(true)
-    grabEmojis(selectedCategory)
+  function tryAgain() {
+    setIsGameWon(false);
+    setIsGameLost(false);
+    setEmojis([]);
+    setMatchedEmojis([]);
+    setSelectedEmojis([]);
+    setCardFlips(0);
+    setIsGameStarted(true);
+    grabEmojis(selectedCategory);
   }
 
-  function resetGame(){
-    setIsGameStarted(false)
-    setIsGameWon(false)
-    setIsGameLost(false)
-    setEmojis([])
-    setMatchedEmojis([])
-    setSelectedEmojis([])
-    setCardFlips(0)
+  function resetGame() {
+    setIsGameStarted(false);
+    setIsGameWon(false);
+    setIsGameLost(false);
+    setEmojis([]);
+    setMatchedEmojis([]);
+    setSelectedEmojis([]);
+    setCardFlips(0);
   }
 
-  async function gameWon(){
+  async function gameWon() {
     console.log("Game won");
-    setIsGameWon(true)
-    
-    // Save game stats to database
+    setIsGameWon(true);
+
     if (name && difficulty) {
       try {
         await saveGameStats(name, difficulty, cardFlips, true);
@@ -91,12 +87,11 @@ function App() {
         console.error("Failed to save game stats:", error);
       }
     }
-    
   }
 
-  async function gameLost(){
+  async function gameLost() {
     console.log("Game lost");
-    setIsGameLost(true)
+    setIsGameLost(true);
   }
 
   useEffect(() => {
@@ -113,26 +108,32 @@ function App() {
 
   async function grabEmojis(category) {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const response = await fetch(
         `https://emojihub.yurace.pro/api/all/category/${category}`
       );
       const data = await response.json();
       if (!response.ok) {
-        setIsLoading(false)
+        setIsLoading(false);
+        setError("Failed to fetch emojis");
         throw new Error("Failed to fetch emojis");
       }
-      setIsGameStarted(true)
+      setIsGameStarted(true);
       const dataSlice = grabRandomEmojis(data);
       const dataSample = shuffleArray(dataSlice);
-      setIsLoading(false)
+      setIsLoading(false);
 
       setEmojis(dataSample);
     } catch (error) {
-      setError(error);
+      setError(error.message);
       setIsLoading(false);
       console.error("Error fetching emojis:", error);
     }
+  }
+
+  function exitGame() {
+    setIsGameStarted(false);
+    resetGame();
   }
 
   function grabRandomEmojis(data) {
@@ -170,7 +171,6 @@ function App() {
         { name, index },
       ]);
     } else if (!selectedCardEntry && selectedEmojis.length === 2) {
-      // Increment flips when selecting a new card after 2 are already selected
       setCardFlips((prevCardFlips) => prevCardFlips + 1);
       setSelectedEmojis([{ name, index }]);
     }
@@ -182,87 +182,84 @@ function App() {
     const category = formData.get("category");
     const difficultyValue = formData.get("difficulty");
     const nameValue = formData.get("name");
-    
+
     setName(nameValue);
     setDifficulty(difficultyValue);
-    
+
     if (category === "") {
       setError("Please select a category");
       return;
     }
-    
+
     setSelectedCategory(category);
     setCardFlips(0); // Reset flips for new game
     grabEmojis(category);
-    setIsGameStarted(true)
+    setIsGameStarted(true);
   }
 
   return (
     <>
-    
-    <main>
-    {isGameWon && <Confetti />}
-      {isGameWon && <WinLose isGameWon={isGameWon} tryAgain={tryAgain} />}
-      {isGameLost && <WinLose isGameLost={isGameLost} tryAgain={tryAgain} />}
-      <div className="game-container">
-      
-      <button
-      onClick={() => setShowLeaderboard(!showLeaderboard)}
-      className="btn btn--leaderboard"
-    >
-      {showLeaderboard ? "Hide Leaderboard" : "View Leaderboard"}
-    </button>
-      <div className="header-section">
-        <h1>Emoji Memory Game</h1>
-      </div>
-
-      {showLeaderboard ? (
-        <Leaderboard />
-      ) : !isGameStarted ? (
-        <Form handleSubmit={handleSubmit} cat={selectedCategory} />
-      ) : (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="game-container-motion"
-        >
-          <div className="stats mb-4">
-            <p className="text-2xl text-neutral-500">
-              Name: <span className="text-neutral-100">{name}</span>
-            </p>
-            <p className="text-2xl text-neutral-500">
-              Difficulty: <span className="text-neutral-100 capitalize">{difficulty}</span>
-            </p>
-            <p className="text-2xl text-neutral-500">
-              Card Flips: <span className="text-neutral-100">{cardFlips} of {difficultyLevels[difficulty]}</span>
-            </p>
+      <main>
+        {isGameWon && <Confetti />}
+        {(isGameWon || isGameLost) && <WinLose isGameWon={isGameWon} isGameLost={isGameLost} tryAgain={tryAgain} exitGame={exitGame} />}
+        <div className="game-container">
+          <button
+            onClick={() => setShowLeaderboard(!showLeaderboard)}
+            className="btn btn--leaderboard"
+          >
+            {showLeaderboard ? "Hide Leaderboard" : "View Leaderboard"}
+          </button>
+          <div className="header-section">
+            <h1>Emoji Memory Game</h1>
           </div>
-          {isLoading ? 
-            <p className="text-2xl text-neutral-500 text-center">Loading emoji deck...</p> :
-            <Cards
-              data={emojis}
-              handleClick={handleFlip}
-              matchedEmojis={matchedEmojis}
-              selectedEmojis={selectedEmojis}
-            />
-          }
-        </motion.div>
-      )}
-      </div>
-    </main>
+
+          {showLeaderboard ? (
+            <Leaderboard />
+          ) : !isGameStarted ? (
+            <Form handleSubmit={handleSubmit} cat={selectedCategory} name={name} setName={setName} />
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="game-container-motion"
+            >
+              <div className="stats mb-4">
+                <p className="text-2xl text-neutral-500">
+                  Name: <span className="text-neutral-100">{name}</span>
+                </p>
+                <p className="text-2xl text-neutral-500">
+                  Difficulty:{" "}
+                  <span className="text-neutral-100 capitalize">
+                    {difficulty}
+                  </span>
+                </p>
+                <p className="text-2xl text-neutral-500">
+                  Card Flips:{" "}
+                  <span className="text-neutral-100">
+                    {cardFlips} of {difficultyLevels[difficulty]}
+                  </span>
+                </p>
+              </div>
+              {isLoading ? (
+                <p className="text-2xl text-neutral-500 text-center">
+                  Loading emoji deck...
+                </p>
+              ) : (
+                <Cards
+                  data={emojis}
+                  handleClick={handleFlip}
+                  matchedEmojis={matchedEmojis}
+                  selectedEmojis={selectedEmojis}
+                />
+              )}
+            </motion.div>
+          )}
+        </div>
+      </main>
     </>
   );
 }
 
 export default App;
-
-// ✅ if 2 cards are selected, check if they match
-  // ✅ if they match, add them to the matchedEmojis array
-  // ✅ if they don't match, remove them from the selectedEmojis array
-  // if card is selected add selected class to the card
-  // if 2 cards are selected and not a match remove the selected class from the cards
-  // if 2 cards are selected and a match add the matched class to the cards
-  //if the matchedEmojis array is equal to the emojis array, the game is won
-  //if the game is won, show a victory message

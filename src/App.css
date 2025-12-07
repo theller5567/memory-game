@@ -1,4 +1,15 @@
 
+#root {
+  text-align: center;
+  --dark: rgba(8,8,8,0.95);
+  --dark-primary: #082f49;
+  --light-primary: #f0f9ff;
+  --light-secondary: #cbd5e1;
+  --accent: oklch(71.5% 0.143 215.221);
+  --accent-2: #F9E11E;
+  --btn-disabled: #a8a29e;
+}
+
 body {
   background-image: url("./public/images/emoji-bg.jpeg");
   background-size: cover;
@@ -24,62 +35,9 @@ body::before {
 body.bg-darken::before {
   background-color: rgba(0, 0, 0, 0.8);
 }
-#root {
-  text-align: center;
-  --dark: rgba(8,8,8,0.95);
-  --dark-primary: #082f49;
-  --light-primary: #f0f9ff;
-  --light-secondary: #cbd5e1;
-  --accent: oklch(71.5% 0.143 215.221);
-  --accent-2: #F9E11E;
-  --btn-disabled: #a8a29e;
-}
-
-.win-lose-container {
-  position: absolute;
-  z-index: 1;
-  width: 500px;
-  height: 200px;
-  border-radius: 1rem;
-  box-shadow: 0 0 0 999em rgba(0,0,0,0.8);
-  background: transparent;
-}
-.win-lose-container .btn--try-again {
-  font-size: 1.25rem;
-  font-weight: 700;
-  padding: 0.5rem 1rem;
-  display: inline-block;
-  cursor: pointer;
-  max-width: 60%;
-  margin: 0 auto;
-  transition: all 0.3s ease;
-}
-.win-lose-container .btn--try-again:hover {
-  background-color: var(--light-secondary);
-  color: var(--dark);
-}
-.win, .lose {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-content: center;
-  border-radius: 1rem;
-}
-.win h2, .lose h2 {
-  font-size: 2rem;
-  font-weight: bold;
-  font-family: "Slackey", sans-serif;
-}
-.win {
-  background-color: oklch(72.3% 0.219 149.579);
-}
-.lose {
-  background-color: oklch(63.7% 0.237 25.331);
-}
 
 main {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -88,7 +46,6 @@ main {
   height: 100vh;
 }
 .game-container {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -121,6 +78,7 @@ main h1 {
 .header-section {
   margin-block: 2rem;
 }
+
 /*===========================
 Form
 ============================*/
@@ -260,7 +218,6 @@ Buttons
 }
 
 .card-container {
-  /* layout variables for responsive tweaks */
   --cols: 5;
   --rows: 4;
   --gap: 0.5rem;
@@ -297,6 +254,94 @@ Buttons
   height: 100%;
   
 }
+
+.card-item--selected,
+.card-item--matched {
+    transform: rotateY(180deg);
+    transition: transform .6s;
+}
+
+.btn--emoji__front {
+    backface-visibility: hidden;
+}
+
+.btn--emoji__back--selected {
+    transform: rotateY(180deg);
+}
+
+.btn--emoji__back--matched {
+    transform: rotateY(180deg);
+    background-color: var(--accent);
+    border: 2px solid var(--accent);
+    cursor: not-allowed;
+}
+
+.btn--emoji__front:hover,
+.btn--emoji__front:focus {
+    background-color: var(--accent);
+    cursor: pointer;
+    outline: 2px solid var(--dark-primary);
+    outline-offset: -2px;
+}
+
+.card-item--selected .btn--emoji__back--selected {
+    outline: 2px solid var(--dark-primary);
+    outline-offset: -2px;
+}
+
+/*===========================
+Win/Lose Popup
+============================*/
+
+.win-lose-container {
+  position: absolute;
+  z-index: 1;
+  width: 500px;
+  height: 200px;
+  border-radius: 1rem;
+  box-shadow: 0 0 0 999em rgba(0,0,0,0.8);
+  background: transparent;
+}
+.win-lose-container .btn-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.win-lose-container .btn {
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  display: inline-block;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.win-lose-container .btn:hover {
+  background-color: var(--light-secondary);
+  color: var(--dark);
+}
+.win, .lose {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  border-radius: 1rem;
+}
+.win h2, .lose h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  font-family: "Slackey", sans-serif;
+}
+.win {
+  background-color: oklch(72.3% 0.219 149.579);
+}
+.lose {
+  background-color: oklch(63.7% 0.237 25.331);
+}
+
 
 /*===========================
 Responsive
@@ -344,6 +389,9 @@ Responsive
   form {
     margin-block: 1rem;
   }
+  .form-button, form input, form select {
+    font-size: 1rem;
+  }
   .stats {
     flex-direction: row;
     align-items: flex-start;
@@ -372,11 +420,6 @@ Responsive
     --rows: 5;
   }
   
-  .form-button,
-  form input,
-  form select {
-    font-size: 1rem;
-  }
   .btn--emoji {
     font-size: clamp(2.25rem, 9vw, 4.5rem);
   }
@@ -390,38 +433,3 @@ Responsive
     max-height: 100vh;
   }
 }
-
-.card-item--selected,
-.card-item--matched {
-    transform: rotateY(180deg);
-    transition: transform .6s;
-}
-
-.btn--emoji__front {
-    backface-visibility: hidden;
-}
-
-.btn--emoji__back--selected {
-    transform: rotateY(180deg);
-}
-
-.btn--emoji__back--matched {
-    transform: rotateY(180deg);
-    background-color: var(--accent);
-    border: 2px solid var(--accent);
-    cursor: not-allowed;
-}
-
-.btn--emoji__front:hover,
-.btn--emoji__front:focus {
-    background-color: var(--accent);
-    cursor: pointer;
-    outline: 2px solid var(--dark-primary);
-    outline-offset: -2px;
-}
-
-.card-item--selected .btn--emoji__back--selected {
-    outline: 2px solid var(--dark-primary);
-    outline-offset: -2px;
-}
-
