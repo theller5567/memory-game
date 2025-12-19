@@ -43,7 +43,7 @@ main {
   align-items: center;
   justify-content: center;
   width: 100vw;
-  height: 100vh;
+  height: 100svh;
 }
 .game-container {
   display: flex;
@@ -58,7 +58,6 @@ main {
   border-radius: 1rem;
   border: 2px solid rgba(255, 255, 255, 1);
   box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.5);
-  min-height: 80vh;
   overflow: hidden;
 }
 main .stats {
@@ -199,13 +198,21 @@ Buttons
   top: 1rem;
   right: 1rem;
   z-index: 1000;
-  background-color: var(--accent);
-  color: var(--light-primary);
+  background-color: --light-primary;
+  color: var(--dark-primary);
   font-size: 1rem;
   font-weight: 700;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn--leaderboard:hover,
+.btn--leaderboard:focus {
+  background-color: #f5f5f5;
+  color: var(--dark-primary);
+  box-shadow: 0 0 5px 1px var(--dark-primary);
 }
 
 .game-container-motion {
@@ -411,7 +418,6 @@ Responsive
     max-width: 100%;
     margin: 0 auto 1rem auto;
     padding: 1rem;
-    height: 90vh;
   }
   .card-container {
     --pad: 0.5rem;
